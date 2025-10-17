@@ -2,10 +2,15 @@ import 'dotenv/config';
 
 process.env['NODE_ENV'] = 'test';
 process.env['JWT_SECRET'] = 'test-secret-key';
+process.env['FIREBASE_PROJECT_ID'] = 'test-project';
+process.env['GOOGLE_APPLICATION_CREDENTIALS'] = 'test-credentials.json';
 
 jest.mock('firebase-admin', () => ({
     initializeApp: jest.fn(),
     apps: [],
+    credential: {
+        applicationDefault: jest.fn(),
+    },
     firestore: jest.fn(() => ({
         collection: jest.fn(() => ({
             doc: jest.fn(() => ({
@@ -35,6 +40,9 @@ jest.mock('firebase-admin', () => ({
                 })),
             })),
         })),
+        Timestamp: {
+            fromDate: jest.fn((date: Date) => ({ toDate: () => date })),
+        },
     })),
     Timestamp: {
         fromDate: jest.fn((date: Date) => ({ toDate: () => date })),

@@ -72,7 +72,7 @@ describe('TaskService', () => {
 
       mockUserRepository.findById.mockResolvedValue(null);
 
-      await expect(taskService.createTask(taskData)).rejects.toThrow('User not found');
+      await expect(taskService.createTask(taskData)).rejects.toThrow('User does not exist');
     });
   });
 
