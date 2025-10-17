@@ -14,7 +14,6 @@ RUN npm ci --only=production && npm cache clean --force
 COPY dist/ ./dist/
 
 COPY .env* ./
-COPY firebase-service-account.json ./
 COPY start.sh ./
 
 RUN chmod +x start.sh

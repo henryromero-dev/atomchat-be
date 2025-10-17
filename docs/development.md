@@ -14,11 +14,39 @@ PORT=3000
 NODE_ENV=development
 CORS_ORIGIN=http://localhost:4200
 FIREBASE_PROJECT_ID=<your-project-id>
-GOOGLE_APPLICATION_CREDENTIALS=<absolute-path-to-service-account.json>
+GOOGLE_APPLICATION_CREDENTIALS=<absolute-path-to-service-account.json> # optional when using Docker secrets
 JWT_SECRET=<long-random-string>
 ```
 
 You can start with the provided `env.example` as a template.
+
+## Providing Firebase Credentials to Docker
+
+The repository does not include the Firebase service-account JSON. Store it securely on the host (for example `/opt/atomchat/firebase-service-account.json`) and mount it when running the container.
+
+### Docker Compose
+
+1. Export a host path before running Compose:
+	 ```bash
+	 export FIREBASE_SERVICE_ACCOUNT_FILE=/opt/atomchat/firebase-service-account.json
+	 ```
+2. Start the stack: `docker compose up -d`
+
+The compose file mounts the host file at `/run/secrets/firebase-service-account.json` inside the container and sets `GOOGLE_APPLICATION_CREDENTIALS` accordingly.
+
+### Plain Docker Run
+
+```bash
+docker run -d \
+	--name atomchat-be \
+	-p 3000:3000 \
+	-e FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID \
+	-e JWT_SECRET=$JWT_SECRET \
+	-v /opt/atomchat/firebase-service-account.json:/run/secrets/firebase-service-account.json:ro \
+	ghcr.io/henryromero-dev/atomchat-be:latest
+```
+
+If you store the credential at another location, update the bind mount target accordingly.
 
 ## Installing Dependencies
 ```bash
