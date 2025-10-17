@@ -1,0 +1,30 @@
+services:
+  atomchat-be:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: atomchat-backend-dev
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - CORS_ORIGIN=http://localhost:4200
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/firebase-service-account.json
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      # Montar el código fuente para desarrollo
+      - ./src:/app/src
+      - ./firebase-service-account.json:/app/firebase-service-account.json:ro
+      # Excluir node_modules para evitar conflictos
+      - /app/node_modules
+    restart: unless-stopped
+    networks:
+      - atomchat-network
+
+networks:
+  atomchat-network:
+    driver: bridge
