@@ -3,6 +3,7 @@ import { UserService } from '../../../application/services';
 import { CreateUserDto, UpdateUserDto, GetUserByEmailDto } from '../../../application/dtos';
 import { AuthenticatedRequest } from '../middleware';
 
+// Exposes CRUD endpoints for user accounts and maps errors to HTTP responses.
 export class UserController {
     constructor(private readonly userService: UserService) { }
 
@@ -14,6 +15,7 @@ export class UserController {
         } catch (error) {
             if (error instanceof Error) {
                 if (error.message === 'User with this email already exists') {
+                    // Conflict hints the client to prompt for login instead of registration.
                     res.status(409).json({ error: error.message });
                     return;
                 }

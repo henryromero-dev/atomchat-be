@@ -3,6 +3,7 @@ import { Task, CreateTaskData, UpdateTaskData } from '../../domain/entities';
 import { TaskRepository } from '../../domain/repositories';
 import { getFirestore } from '../database/firestore.config';
 
+// Firestore-backed task repository keeps data mapping logic in a single place.
 export class FirestoreTaskRepository implements TaskRepository {
     private readonly collection = 'tasks';
 
@@ -46,6 +47,7 @@ export class FirestoreTaskRepository implements TaskRepository {
                     updatedAt: data['updatedAt'].toDate(),
                 };
             })
+            // Sort results locally to avoid Firestore composite index requirements.
             .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     }
 

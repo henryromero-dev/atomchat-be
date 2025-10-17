@@ -3,12 +3,14 @@ import { TaskService } from '../../../application/services';
 import { CreateTaskDto, UpdateTaskDto } from '../../../application/dtos';
 import { AuthenticatedRequest } from '../middleware';
 
+// Handles task endpoints and enforces per-user access controls.
 export class TaskController {
     constructor(private readonly taskService: TaskService) { }
 
     async createTask(req: AuthenticatedRequest, res: Response): Promise<void> {
         try {
             const taskData = req.body as CreateTaskDto;
+            // Ensure tasks are always scoped to the authenticated user regardless of payload.
             taskData.userId = req.user!.id;
 
             const task = await this.taskService.createTask(taskData);
@@ -49,6 +51,7 @@ export class TaskController {
                 return;
             }
 
+            // Only the owner of the task can view the record.
             if (task.userId !== req.user!.id) {
                 res.status(403).json({ error: 'Access denied. You can only access your own tasks.' });
                 return;
@@ -90,6 +93,7 @@ export class TaskController {
                 return;
             }
 
+            // Reject attempts to update tasks that belong to another user.
             if (existingTask.userId !== req.user!.id) {
                 res.status(403).json({ error: 'Access denied. You can only update your own tasks.' });
                 return;
@@ -125,6 +129,7 @@ export class TaskController {
                 return;
             }
 
+            // Prevent cross-user deletions by checking the task owner first.
             if (existingTask.userId !== req.user!.id) {
                 res.status(403).json({ error: 'Access denied. You can only delete your own tasks.' });
                 return;

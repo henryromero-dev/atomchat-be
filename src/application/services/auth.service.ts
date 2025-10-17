@@ -7,6 +7,7 @@ export interface AuthService {
     verifyToken(token: string): { userId: string; email: string } | null;
 }
 
+// Handles JWT token creation and validation while delegating user lookups to repositories.
 export class JwtAuthService implements AuthService {
     private readonly secret: string;
 
@@ -34,6 +35,7 @@ export class JwtAuthService implements AuthService {
                 email: decoded.email,
             };
         } catch (error) {
+            // Returning null lets callers decide how to handle expired or malformed tokens.
             return null;
         }
     }

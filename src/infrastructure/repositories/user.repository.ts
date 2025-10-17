@@ -3,6 +3,7 @@ import { User, CreateUserData, UpdateUserData } from '../../domain/entities';
 import { UserRepository } from '../../domain/repositories';
 import { getFirestore } from '../database/firestore.config';
 
+// Firestore implementation of the UserRepository contract.
 export class FirestoreUserRepository implements UserRepository {
     private readonly collection = 'users';
 

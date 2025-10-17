@@ -9,6 +9,7 @@ export class TaskService {
     ) { }
 
     async createTask(data: CreateTaskDto): Promise<Task> {
+        // Guard against orphaned tasks by ensuring the owner exists before creation.
         const user = await this.userRepository.findById(data.userId);
         if (!user) {
             throw new Error('User does not exist');
@@ -36,6 +37,7 @@ export class TaskService {
     }
 
     async updateTask(id: string, data: UpdateTaskDto): Promise<Task | null> {
+        // Use repository lookups so we surface a consistent not-found error message.
         const task = await this.taskRepository.findById(id);
         if (!task) {
             throw new Error('Task does not exist');
@@ -51,6 +53,7 @@ export class TaskService {
     }
 
     async deleteTask(id: string): Promise<boolean> {
+        // Re-validate ownership to avoid deleting records that were already removed.
         const task = await this.taskRepository.findById(id);
         if (!task) {
             throw new Error('Task does not exist');

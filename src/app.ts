@@ -10,6 +10,7 @@ import { createUserRoutes, createTaskRoutes, createAuthRoutes } from './interfac
 import { createAuthMiddleware, errorHandler } from './interfaces/http/middleware';
 
 export const createApp = (): express.Application => {
+    // Initialise Firebase Admin once so repository instances can reuse the connection.
     initializeFirestore();
 
     const userRepository = new FirestoreUserRepository();
@@ -28,6 +29,7 @@ export const createApp = (): express.Application => {
     const app = express();
 
     app.use(helmet());
+    // Allow calls from the frontend origin while keeping credentials support configurable.
     app.use(cors({
         origin: process.env['CORS_ORIGIN'] || '*',
         credentials: true,
@@ -36,6 +38,7 @@ export const createApp = (): express.Application => {
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ extended: true }));
 
+    // Lightweight liveness probe for uptime checks.
     app.get('/health', (_req: express.Request, res: express.Response) => {
         res.json({ status: 'ok', timestamp: new Date().toISOString() });
     });

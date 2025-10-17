@@ -2,6 +2,7 @@ import { User, CreateUserData, UpdateUserData } from '../../domain/entities';
 import { UserRepository } from '../../domain/repositories';
 import { CreateUserDto, UpdateUserDto, GetUserByEmailDto } from '../dtos';
 
+// Provides user-centric operations while keeping persistence abstracted away.
 export class UserService {
     constructor(private readonly userRepository: UserRepository) { }
 
@@ -33,6 +34,7 @@ export class UserService {
         }
 
         if (data.email && data.email !== user.email) {
+            // Prevent collisions by checking whether the new email is already taken.
             const existingUser = await this.userRepository.findByEmail(data.email);
             if (existingUser) {
                 throw new Error('Email already taken by another user');

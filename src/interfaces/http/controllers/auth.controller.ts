@@ -3,6 +3,7 @@ import { JwtAuthService } from '../../../application/services';
 import { UserService } from '../../../application/services';
 import { CreateUserDto, LoginDto } from '../../../application/dtos';
 
+// Coordinates authentication workflows such as login, registration, and identity checks.
 export class AuthController {
     constructor(
         private readonly authService: JwtAuthService,
@@ -21,6 +22,7 @@ export class AuthController {
 
             const user = await this.userService.getUserByEmail({ email });
             if (!user) {
+                // Returning 201 gives the client a clear signal to branch into registration flow.
                 res.status(201).json({ error: 'User does not exists', requireRegister: true });
                 return;
             }

@@ -9,6 +9,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export const createAuthMiddleware = (authService: JwtAuthService) => {
+    // Middleware factory allows unit tests to supply a stubbed auth service.
     return async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
         try {
             const authHeader = req.headers.authorization;
@@ -18,6 +19,7 @@ export const createAuthMiddleware = (authService: JwtAuthService) => {
                 return;
             }
 
+            // Skip the "Bearer " prefix without splitting to avoid extra allocations.
             const token = authHeader.substring(7); 
             const user = await authService.getUserFromToken(token);
 

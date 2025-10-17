@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
+// Centralised error handler maps known business errors to HTTP responses.
 export const errorHandler = (
     error: Error,
     _req: Request,
